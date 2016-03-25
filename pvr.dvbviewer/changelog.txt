@@ -1,3 +1,6 @@
+2.0.4
+[added] Delete the timeshift file when the stream is closed
+
 2.0.3
 [fixed] Timerlist with utf8 chars
 [updated] RS version to 1.31.0
