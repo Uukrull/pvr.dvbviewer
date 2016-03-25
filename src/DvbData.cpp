@@ -463,8 +463,6 @@ bool Dvb::GetRecordings(ADDON_HANDLE handle)
     recinfo.iDuration     = recording.duration;
     recinfo.iGenreType    = recording.genre & 0xF0;
     recinfo.iGenreSubType = recording.genre & 0x0F;
-    recinfo.iChannelUid   = PVR_CHANNEL_INVALID_UID; // TODO: try searching by name
-    recinfo.channelType   = PVR_RECORDING_CHANNEL_TYPE_TV;
 
     CStdString tmp;
     switch(g_groupRecordings)

@@ -23,6 +23,7 @@
 #include "TimeshiftBuffer.h"
 #include "RecordingReader.h"
 #include "kodi/xbmc_pvr_dll.h"
+#include "kodi/libKODI_guilib.h"
 #include "p8-platform/util/util.h"
 #include <stdlib.h>
 
@@ -308,12 +309,12 @@ const char* GetMininumPVRAPIVersion(void)
 
 const char* GetGUIAPIVersion(void)
 {
-  return ""; // GUI API not used
+  return KODI_GUILIB_API_VERSION;
 }
 
 const char* GetMininumGUIAPIVersion(void)
 {
-  return ""; // GUI API not used
+  return KODI_GUILIB_MIN_API_VERSION;
 }
 
 PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
@@ -401,6 +402,14 @@ int GetChannelsAmount(void)
     return 0;
 
   return DvbData->GetChannelsAmount();
+}
+
+int GetCurrentClientChannel(void)
+{
+  if (!DvbData || !DvbData->IsConnected())
+    return PVR_ERROR_SERVER_ERROR;
+
+  return DvbData->GetCurrentClientChannel();
 }
 
 bool SwitchChannel(const PVR_CHANNEL &channel)
@@ -690,7 +699,6 @@ PVR_ERROR RenameRecording(const PVR_RECORDING &_UNUSED(recording)) { return PVR_
 PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
 PVR_ERROR UndeleteRecording(const PVR_RECORDING& _UNUSED(recording)) { return PVR_ERROR_NOT_IMPLEMENTED; }
 PVR_ERROR DeleteAllRecordingsFromTrash() { return PVR_ERROR_NOT_IMPLEMENTED; }
-PVR_ERROR SetEPGTimeFrame(int iDays) { return PVR_ERROR_NOT_IMPLEMENTED; }
 unsigned int GetChannelSwitchDelay(void) { return 0; }
 void PauseStream(bool _UNUSED(bPaused)) {}
 bool SeekTime(int time, bool backwards, double *startpts) { return false; }
