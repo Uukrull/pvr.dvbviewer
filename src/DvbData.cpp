@@ -879,7 +879,7 @@ DvbTimers_t Dvb::LoadTimers()
 {
   DvbTimers_t timers;
 
-  CStdString &&req = GetHttpXML(BuildURL("api/timerlist.html?utf8"));
+  CStdString &&req = GetHttpXML(BuildURL("api/timerlist.html?utf8=2"));
   RemoveNullChars(req);
 
   TiXmlDocument doc;
@@ -888,8 +888,6 @@ DvbTimers_t Dvb::LoadTimers()
   {
     XBMC->Log(LOG_ERROR, "Unable to parse timers. Error: %s",
         doc.ErrorDesc());
-    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30506));
-    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30503));
     return timers;
   }
 
