@@ -34,6 +34,7 @@ TimeshiftBuffer::~TimeshiftBuffer(void)
     XBMC->CloseFile(m_filebufferReadHandle);
   if (m_streamHandle)
     XBMC->CloseFile(m_streamHandle);
+  XBMC->DeleteFile(m_bufferPath);
 }
 
 bool TimeshiftBuffer::IsValid()
