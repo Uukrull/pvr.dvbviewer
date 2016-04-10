@@ -24,7 +24,7 @@
 #include "RecordingReader.h"
 #include "kodi/xbmc_pvr_dll.h"
 #include "kodi/libKODI_guilib.h"
-#include "p8-platform/util/util.h"
+#include "platform/util/util.h"
 #include <stdlib.h>
 
 using namespace ADDON;
@@ -327,7 +327,7 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
   pCapabilities->bSupportsTimers             = true;
   pCapabilities->bSupportsChannelGroups      = true;
   pCapabilities->bSupportsChannelScan        = false;
-  pCapabilities->bHandlesInputStream         = true;
+  pCapabilities->bHandlesInputStream         = false;
   pCapabilities->bHandlesDemuxing            = false;
   pCapabilities->bSupportsLastPlayedPosition = false;
 
@@ -523,16 +523,6 @@ const char *GetLiveStreamURL(const PVR_CHANNEL &channel)
 
   DvbData->SwitchChannel(channel);
   return DvbData->GetLiveStreamURL(channel).c_str();
-}
-
-bool IsRealTimeStream()
-{
-  if (!tsBuffer)
-    return true;
-  //FIXME as soon as we return false here the players current time value starts
-  // flickering/jumping
-  //return tsBuffer->NearEnd();
-  return true;
 }
 
 bool CanPauseStream(void)

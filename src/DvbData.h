@@ -5,8 +5,8 @@
 
 #include "RecordingReader.h"
 #include "kodi/libXBMC_pvr.h"
-#include "p8-platform/util/StdString.h"
-#include "p8-platform/threads/threads.h"
+#include "platform/util/StdString.h"
+#include "platform/threads/threads.h"
 #include <list>
 #include <functional>
 
@@ -184,7 +184,7 @@ typedef std::vector<DvbGroup> DvbGroups_t;
 typedef std::vector<DvbTimer> DvbTimers_t;
 
 class Dvb
-  : public P8PLATFORM::CThread
+  : public PLATFORM::CThread
 {
 public:
   Dvb(void);
@@ -274,8 +274,8 @@ private:
   DvbTimers_t m_timers;
   unsigned int m_nextTimerId;
 
-  P8PLATFORM::CMutex m_mutex;
-  P8PLATFORM::CCondition<bool> m_started;
+  PLATFORM::CMutex m_mutex;
+  PLATFORM::CCondition<bool> m_started;
 };
 
 #endif
