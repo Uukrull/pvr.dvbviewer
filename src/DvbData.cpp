@@ -909,8 +909,8 @@ DvbTimers_t Dvb::LoadTimers()
   {
     XBMC->Log(LOG_ERROR, "Unable to parse timers. Error: %s",
         doc.ErrorDesc());
-    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30506));
-    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30503));
+//    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30506));
+//    XBMC->QueueNotification(QUEUE_ERROR, XBMC->GetLocalizedString(30503));
     return timers;
   }
 

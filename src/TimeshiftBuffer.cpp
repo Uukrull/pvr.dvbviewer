@@ -8,6 +8,10 @@
 
 using namespace ADDON;
 
+#ifdef _WIN32
+#undef DeleteFile
+#endif
+
 TimeshiftBuffer::TimeshiftBuffer(const std::string &streamURL,
     const std::string &bufferPath)
   : m_bufferPath(bufferPath)
@@ -35,6 +39,7 @@ TimeshiftBuffer::~TimeshiftBuffer(void)
     XBMC->CloseFile(m_filebufferReadHandle);
   if (m_streamHandle)
     XBMC->CloseFile(m_streamHandle);
+  XBMC->DeleteFile(m_bufferPath.c_str());
   XBMC->Log(LOG_DEBUG, "Timeshift: Stopped");
 }
 
