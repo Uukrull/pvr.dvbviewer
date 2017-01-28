@@ -21,6 +21,7 @@ TimeshiftBuffer::TimeshiftBuffer(const CStdString &streamURL,
   Sleep(100);
   m_filebufferReadHandle = XBMC->OpenFile(m_bufferPath, READ_NO_CACHE);
   m_start = time(NULL);
+  XBMC->Log(LOG_INFO, "Timeshift starts; url=%s", streamURL.c_str());
   CreateThread();
 }
 
@@ -34,7 +35,7 @@ TimeshiftBuffer::~TimeshiftBuffer(void)
     XBMC->CloseFile(m_filebufferReadHandle);
   if (m_streamHandle)
     XBMC->CloseFile(m_streamHandle);
-  XBMC->DeleteFile(m_bufferPath);    
+  XBMC->Log(LOG_DEBUG, "Timeshift: Stopped");
 }
 
 bool TimeshiftBuffer::IsValid()
@@ -125,7 +126,11 @@ time_t TimeshiftBuffer::TimeEnd()
 
 bool TimeshiftBuffer::NearEnd()
 {
+  //FIXME as soon as we return false here the players current time value starts
+  // flickering/jumping
+  return true;
+
   // other PVRs use 10 seconds here, but we aren't doing any demuxing
   // we'll therefore just asume 1 secs needs about 1mb
-  return Length() - Position() <= 10 * 1048576;
+  //return Length() - Position() <= 10 * 1048576;
 }

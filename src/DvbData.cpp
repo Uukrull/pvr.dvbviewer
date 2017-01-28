@@ -89,15 +89,6 @@ bool Dvb::GetDriveSpace(long long *total, long long *used)
   return true;
 }
 
-bool Dvb::SwitchChannel(const PVR_CHANNEL &channelinfo)
-{
-  CLockObject lock(m_mutex);
-  m_currentChannel = channelinfo.iUniqueId;
-  if (!g_lowPerformance)
-    m_updateEPG = true;
-  return true;
-}
-
 unsigned int Dvb::GetCurrentClientChannel(void)
 {
   CLockObject lock(m_mutex);
@@ -122,14 +113,6 @@ bool Dvb::GetChannels(ADDON_HANDLE handle, bool radio)
     xbmcChannel.bIsHidden         = false;
     PVR_STRCPY(xbmcChannel.strChannelName, channel->name.c_str());
     PVR_STRCPY(xbmcChannel.strIconPath,    channel->logoURL.c_str());
-
-    if (!g_useTimeshift)
-    {
-      // self referencing so GetLiveStreamURL() gets triggered
-      CStdString streamURL;
-      streamURL.Format("pvr://stream/tv/%u.ts", channel->backendNr);
-      PVR_STRCPY(xbmcChannel.strStreamURL, streamURL.c_str());
-    }
 
     PVR->TransferChannelEntry(handle, &xbmcChannel);
   }
@@ -552,10 +535,12 @@ bool Dvb::OpenLiveStream(const PVR_CHANNEL &channelinfo)
   XBMC->Log(LOG_DEBUG, "%s: channel=%u", __FUNCTION__, channelinfo.iUniqueId);
   CLockObject lock(m_mutex);
 
-  if (channelinfo.iUniqueId == m_currentChannel)
-    return true;
-
-  SwitchChannel(channelinfo);
+  if (channelinfo.iUniqueId != m_currentChannel)
+  {
+    m_currentChannel = channelinfo.iUniqueId;
+    if (!g_lowPerformance)
+      m_updateEPG = true;
+  }
   return true;
 }
 

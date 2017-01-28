@@ -3,11 +3,12 @@
 #ifndef PVR_DVBVIEWER_TIMESHIFTBUFFER_H
 #define PVR_DVBVIEWER_TIMESHIFTBUFFER_H
 
+#include "IStreamReader.h"
 #include "platform/util/StdString.h"
 #include "platform/threads/threads.h"
 
 class TimeshiftBuffer
-  : public PLATFORM::CThread
+  : public IStreamReader, public PLATFORM::CThread
 {
 public:
   TimeshiftBuffer(const CStdString &streamURL, const CStdString &bufferPath);
