@@ -665,7 +665,7 @@ CStdString Dvb::URLEncodeInline(const CStdString& data)
 bool Dvb::LoadChannels()
 {
   const CStdString &req = GetHttpXML(BuildURL("api/getchannelsxml.html?subchannels=1"
-        "&rtsp=1&upnp=1&logo=1"));
+        "&upnp=1&logo=1"));
 
   TiXmlDocument doc;
   doc.Parse(req);

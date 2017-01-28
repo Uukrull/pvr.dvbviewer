@@ -1,4 +1,5 @@
 #include "TimeshiftBuffer.h"
+#include "StreamReader.h"
 #include "client.h"
 #include "platform/util/util.h"
 
@@ -8,20 +9,19 @@
 
 using namespace ADDON;
 
-TimeshiftBuffer::TimeshiftBuffer(const CStdString &streamURL,
-    const CStdString &bufferPath)
-  : m_bufferPath(bufferPath)
+TimeshiftBuffer::TimeshiftBuffer(IStreamReader *strReader,
+    const std::string &bufferPath)
+  : m_strReader(strReader), m_bufferPath(bufferPath)
 {
-  m_streamHandle = XBMC->OpenFile(streamURL, READ_NO_CACHE);
   m_bufferPath += "/tsbuffer.ts";
-  m_filebufferWriteHandle = XBMC->OpenFileForWrite(m_bufferPath, true);
+  m_filebufferWriteHandle = XBMC->OpenFileForWrite(m_bufferPath.c_str(), true);
 #ifndef TARGET_POSIX
   m_writePos = 0;
 #endif
   Sleep(100);
-  m_filebufferReadHandle = XBMC->OpenFile(m_bufferPath, READ_NO_CACHE);
+  m_filebufferReadHandle = XBMC->OpenFile(m_bufferPath.c_str(), READ_NO_CACHE);
   m_start = time(NULL);
-  XBMC->Log(LOG_INFO, "Timeshift starts; url=%s", streamURL.c_str());
+  XBMC->Log(LOG_INFO, "Timeshift: Started");
   CreateThread();
 }
 
@@ -29,18 +29,20 @@ TimeshiftBuffer::~TimeshiftBuffer(void)
 {
   StopThread(0);
 
-  if (m_filebufferWriteHandle)
-    XBMC->CloseFile(m_filebufferWriteHandle);
   if (m_filebufferReadHandle)
     XBMC->CloseFile(m_filebufferReadHandle);
-  if (m_streamHandle)
-    XBMC->CloseFile(m_streamHandle);
+  if (m_filebufferWriteHandle)
+  {
+    XBMC->TruncateFile(m_filebufferWriteHandle, 0);
+    XBMC->CloseFile(m_filebufferWriteHandle);
+  }
+  SAFE_DELETE(m_strReader);
   XBMC->Log(LOG_DEBUG, "Timeshift: Stopped");
 }
 
 bool TimeshiftBuffer::IsValid()
 {
-  return (m_streamHandle != nullptr
+  return (m_strReader != nullptr && m_strReader->IsValid()
       && m_filebufferWriteHandle != nullptr
       && m_filebufferReadHandle != nullptr);
 }
@@ -48,11 +50,11 @@ bool TimeshiftBuffer::IsValid()
 void *TimeshiftBuffer::Process()
 {
   XBMC->Log(LOG_DEBUG, "Timeshift: Thread started");
-  byte buffer[STREAM_READ_BUFFER_SIZE];
+  uint8_t buffer[STREAM_READ_BUFFER_SIZE];
 
   while (!IsStopped())
   {
-    unsigned int read = XBMC->ReadFile(m_streamHandle, buffer, sizeof(buffer));
+    ssize_t read = m_strReader->ReadData(buffer, sizeof(buffer));
     XBMC->WriteFile(m_filebufferWriteHandle, buffer, read);
 
 #ifndef TARGET_POSIX
@@ -133,4 +135,9 @@ bool TimeshiftBuffer::NearEnd()
   // other PVRs use 10 seconds here, but we aren't doing any demuxing
   // we'll therefore just asume 1 secs needs about 1mb
   //return Length() - Position() <= 10 * 1048576;
+}
+
+bool TimeshiftBuffer::IsTimeshifting()
+{
+  return true;
 }

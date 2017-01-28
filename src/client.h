@@ -61,6 +61,14 @@
 #define DEFAULT_WEB_PORT         8089
 #define DEFAULT_TSBUFFERPATH     "special://userdata/addon_data/pvr.dvbviewer"
 
+enum class Timeshift
+  : int // same type as addon settings
+{
+  OFF = 0,
+  ON_PLAYBACK,
+  ON_PAUSE
+};
+
 enum class PrependOutline
   : int // same type as addon settings
 {
@@ -87,7 +95,7 @@ extern bool           g_useFavourites;
 extern bool           g_useFavouritesFile;
 extern CStdString     g_favouritesFile;
 extern DvbRecording::Grouping g_groupRecordings;
-extern bool           g_useTimeshift;
+extern Timeshift      g_timeshift;
 extern CStdString     g_timeshiftBufferPath;
 extern bool           g_useRTSP;
 extern PrependOutline g_prependOutline;

@@ -11,22 +11,23 @@ class TimeshiftBuffer
   : public IStreamReader, public PLATFORM::CThread
 {
 public:
-  TimeshiftBuffer(const CStdString &streamURL, const CStdString &bufferPath);
+  TimeshiftBuffer(IStreamReader *strReader, const std::string &bufferPath);
   ~TimeshiftBuffer(void);
-  bool IsValid();
-  ssize_t ReadData(unsigned char *buffer, unsigned int size);
-  int64_t Seek(long long position, int whence);
-  int64_t Position();
-  int64_t Length();
-  time_t TimeStart();
-  time_t TimeEnd();
-  bool NearEnd();
+  bool IsValid() override;
+  ssize_t ReadData(unsigned char *buffer, unsigned int size) override;
+  int64_t Seek(long long position, int whence) override;
+  int64_t Position() override;
+  int64_t Length() override;
+  time_t TimeStart() override;
+  time_t TimeEnd() override;
+  bool NearEnd() override;
+  bool IsTimeshifting() override;
 
 private:
-  virtual void *Process(void);
+  virtual void *Process(void) override;
 
   CStdString m_bufferPath;
-  void *m_streamHandle;
+  IStreamReader *m_strReader;
   void *m_filebufferReadHandle;
   void *m_filebufferWriteHandle;
   time_t m_start;
