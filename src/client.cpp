@@ -45,7 +45,6 @@ CStdString     g_favouritesFile       = "";
 DvbRecording::Grouping g_groupRecordings = DvbRecording::Grouping::DISABLED;
 Timeshift      g_timeshift            = Timeshift::OFF;
 CStdString     g_timeshiftBufferPath  = DEFAULT_TSBUFFERPATH;
-bool           g_useRTSP              = false;
 PrependOutline g_prependOutline       = PrependOutline::IN_EPG;
 bool           g_lowPerformance       = false;
 Transcoding    g_transcoding          = Transcoding::OFF;
@@ -93,9 +92,6 @@ void ADDON_ReadSettings(void)
 
   if (XBMC->GetSetting("timeshiftpath", buffer) && !std::string(buffer).empty())
     g_timeshiftBufferPath = buffer;
-
-  if (!XBMC->GetSetting("usertsp", &g_useRTSP))
-    g_useRTSP = false;
 
   if (!XBMC->GetSetting("prependoutline", &g_prependOutline))
     g_prependOutline = PrependOutline::IN_EPG;
@@ -280,11 +276,6 @@ ADDON_STATUS ADDON_SetSetting(const char *settingName, const void *settingValue)
           newValue.c_str());
       g_timeshiftBufferPath = newValue;
     }
-  }
-  else if (sname == "usertsp")
-  {
-    if (g_useRTSP != *(bool *)settingValue)
-      return ADDON_STATUS_NEED_RESTART;
   }
   else if (sname == "prependoutline")
   {

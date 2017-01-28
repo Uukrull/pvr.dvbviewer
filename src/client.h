@@ -97,7 +97,6 @@ extern CStdString     g_favouritesFile;
 extern DvbRecording::Grouping g_groupRecordings;
 extern Timeshift      g_timeshift;
 extern CStdString     g_timeshiftBufferPath;
-extern bool           g_useRTSP;
 extern PrependOutline g_prependOutline;
 extern bool           g_lowPerformance;
 extern Transcoding    g_transcoding;

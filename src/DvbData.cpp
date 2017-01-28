@@ -680,7 +680,7 @@ bool Dvb::LoadChannels()
 
   TiXmlElement *root = doc.RootElement();
   CStdString streamURL;
-  XMLUtils::GetString(root, (g_useRTSP) ? "rtspURL" : "upnpURL", streamURL);
+  XMLUtils::GetString(root, "upnpURL", streamURL);
 
   m_channels.clear();
   m_channelAmount = 0;
@@ -724,14 +724,7 @@ bool Dvb::LoadChannels()
           channel->logoURL = BuildURL("%s", logoURL.c_str());
         //TODO: maybe move this to GetLiveStreamURL
 
-        if (g_useRTSP)
-        {
-          CStdString urlParams;
-          XMLUtils::GetString(xChannel, "rtsp", urlParams);
-          channel->streamURL = BuildExtURL(streamURL, "%s", urlParams.c_str());
-        }
-        else
-          channel->streamURL = BuildExtURL(streamURL, "%u.ts", channel->backendNr);
+        channel->streamURL = BuildExtURL(streamURL, "%u.ts", channel->backendNr);
         //TODO: better use channel->backendId here? might break default subchannel logic
 
         for (TiXmlElement* xSubChannel = xChannel->FirstChildElement("subchannel");
