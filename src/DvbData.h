@@ -220,7 +220,7 @@ public:
 
   bool OpenLiveStream(const PVR_CHANNEL &channelinfo);
   void CloseLiveStream();
-  const CStdString &GetLiveStreamURL(const PVR_CHANNEL &channelinfo);
+  const CStdString GetLiveStreamURL(const PVR_CHANNEL &channelinfo);
 
 protected:
   virtual void *Process(void);

@@ -550,8 +550,29 @@ void Dvb::CloseLiveStream(void)
   m_currentChannel = 0;
 }
 
-const CStdString &Dvb::GetLiveStreamURL(const PVR_CHANNEL &channelinfo)
+const CStdString Dvb::GetLiveStreamURL(const PVR_CHANNEL &channelinfo)
 {
+  DvbChannel *channel = m_channels[channelinfo.iUniqueId - 1];
+  //TODO: RS API doc says better use channel->backendId here.
+  // however this might break default subchannel logic/overwrite
+  if (g_transcoding != Transcoding::OFF)
+  {
+    switch(g_transcoding)
+    {
+      case Transcoding::TS:
+        return BuildURL("flashstream/stream.ts?chid=%u&%s",
+          channel->backendNr, g_transcodingParams.c_str());
+        break;
+      case Transcoding::WEBM:
+        return BuildURL("flashstream/stream.webm?chid=%u&%s",
+          channel->backendNr, g_transcodingParams.c_str());
+        break;
+      case Transcoding::FLV:
+        return BuildURL("flashstream/stream.flv?chid=%u&%s",
+          channel->backendNr, g_transcodingParams.c_str());
+        break;
+    }
+  }
   return m_channels[channelinfo.iUniqueId - 1]->streamURL;
 }
 
@@ -701,6 +722,7 @@ bool Dvb::LoadChannels()
         CStdString logoURL;
         if (!g_lowPerformance && XMLUtils::GetString(xChannel, "logo", logoURL))
           channel->logoURL = BuildURL("%s", logoURL.c_str());
+        //TODO: maybe move this to GetLiveStreamURL
 
         if (g_useRTSP)
         {
@@ -710,6 +732,7 @@ bool Dvb::LoadChannels()
         }
         else
           channel->streamURL = BuildExtURL(streamURL, "%u.ts", channel->backendNr);
+        //TODO: better use channel->backendId here? might break default subchannel logic
 
         for (TiXmlElement* xSubChannel = xChannel->FirstChildElement("subchannel");
             xSubChannel; xSubChannel = xSubChannel->NextSiblingElement("subchannel"))
